@@ -22,4 +22,28 @@
 # STEP 4: MENU ITEM 1 (Enter monthly income)
 # ******************************************
 # - Show the user the contents of their budget.csv file -
-# 
+# - Ask the user for which month they would like to update their income
+# - Message indicating successful update
+# - Calculate the budget categories for month
+# - Store the values of the categories in respective cells in budget.csv
+
+# STEP 5: MENU ITEM 2 (View Budget Breakdwon)
+# *******************************************
+# - Ask the user for the month which they would like to access their budget breakdown
+# or if they would like to view the breakdown for each month
+
+# STEP 6: Log an Expense
+# **********************
+# - Ask the user for which month they would like to log an expense to open the correct monthly expense csv file
+# - Ask the user for the day of the expense
+# - Ask the user for the details of the expense - (category, detail, amount)
+# - Find the appropriate sorted place in the file to store the expense based on date
+
+# STEP 7: Remove an expense
+# *************************
+# - Ask the user for the month of the expense they are trying to remove
+# - Print out the table/list of expenses for that month from the corresponding csv file, and give each row
+# a corresponding number
+# - Let the user choose a number for a row, and that entry will be removed from the table and csv
+
+# STEP 8: View expense history
