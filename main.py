@@ -1,10 +1,12 @@
 # Yearly Budget and Expense Tracker
-
+from tracker_functions import *
 # STEP 1: Display Welcome Message
 # *******************************
 # - Greet the user to the program
 # - Explain how the program uses the 50/30/20 rule
 # - Explain how the program's menu works
+
+print_welcome_message()
 
 # STEP 2: Design program's menu
 # *****************************
