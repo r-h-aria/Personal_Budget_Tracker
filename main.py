@@ -47,3 +47,15 @@
 # - Let the user choose a number for a row, and that entry will be removed from the table and csv
 
 # STEP 8: View expense history
+# ****************************
+# - Show the total expense amount for each month to the user
+# - Ask the user if they would like to view the particular expenses for a particular month
+# - If they do want to view particular month, ask for the month then print the expenses
+
+# STEP 9: Check remaining budget
+# ******************************
+# - Print the remaining amount of budget for each category for each month
+
+# STEP 10: Generate Spending Report
+# *********************************
+# TBC
