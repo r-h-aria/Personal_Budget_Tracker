@@ -19,6 +19,33 @@ print_welcome_message()
 # 7) Generate spending report (charts, etc)
 # 8) Exit
 
+print_menu_instructions()
+
+print_menu_options()
+
+user_menu_choice = int(input("Please enter a number corresponding to an option: "))
+
+# Create a switch statement that acts as the menu for the program
+match user_menu_choice:
+    case 1:
+        print("TBC")
+    case 2:
+        print("TBC")
+    case 3:
+        print("TBC")
+    case 4:
+        print("TBC")
+    case 5:
+        print("TBC")
+    case 6:
+        print("TBC")
+    case 7:
+        print("TBC")
+    case 8:
+        print("TBC")
+    case _:
+        print("N/A")
+
 # Step 3: Begin implementation of each menu item
 
 # STEP 4: MENU ITEM 1 (Enter monthly income)
