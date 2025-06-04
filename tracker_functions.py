@@ -1,4 +1,5 @@
 # Credit to patorjk.com for an ASCII title art text generator
+# Prints out the welcome message title art for the budget tracker
 def print_welcome_message():
     print("----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------\n"
     "/$$$$$$$                                                             /$$       /$$$$$$$                  /$$                       /$$           /$$$$$$$$                           /$$                           \n"
@@ -14,9 +15,11 @@ def print_welcome_message():
     "                                                                                                              \______/                                                                                             \n"
     "-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------\n\n")
 
+# Prints out instruction prompt for using the main menu
 def print_menu_instructions():
     print("Please choose an option from the menu below by entering the number associated with the option.\n")
 
+# Prints out the actual menu options for the user
 def print_menu_options():
     print(r"""
 *******************************************
@@ -30,3 +33,26 @@ def print_menu_options():
 *        8) Exit                          *
 *******************************************
                                            """)
+    
+# Obtains user's input for choice of menu option. Performs basic input validation and loops till user enters valid option
+def get_menu_choice():
+    # initial variable to act as loop termination
+    valid_choice = False
+
+    # If valid choice is input, breaks out of the loop and returns the integer 
+    # Uses try and except to filter out invalid data types too
+    while(valid_choice != True):
+        try:
+            user_menu_choice = int(input("Please enter a number corresponding to an option: "))
+            if user_menu_choice >= 0 and user_menu_choice <= 8:
+                valid_choice = True
+            else:
+                print("Invalid integer: Input must be between 0 and 8 (inclusive).\n")
+        except ValueError:
+            print("Invalid input: Value must be an integer.\n")
+
+    return user_menu_choice
+    
+
+
+
