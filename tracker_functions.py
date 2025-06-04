@@ -90,19 +90,18 @@ def get_month_income(month):
     while valid_income == False:
         try:
 
-            user_month_income = input("Please enter your income for " + month + ": ")
+            user_month_income = int(input("Please enter your income for " + month + ": "))
 
             # check if the amount entered is a positive number and entered with 2 digits after the decimal (Credit to copilot for using regular expression to read string info)
-            if float(user_month_income) > 0 and re.match(r"^\d+\.\d{2}$", user_month_income):
+            if user_month_income > 0:
                 valid_income = True
             else:
-                print("Please enter a positive income amount as a float with exactly two decimal places.\n")
+                print("Please enter a positive income amount.\n")
 
         except ValueError:
-            print("Please enter a float value down to 2 places after the decimal.\n")
+            print("Please enter an integer value.\n")
+    return user_month_income
     
-    return float(user_month_income)
-
 # Populates the contents of a month row in the budget csv file
 def populate_month_budget_csv(month, income, needs, wants, savings):
     # File name for the csv
@@ -140,9 +139,9 @@ def menu_option_1():
     month_income = get_month_income(month_choice)
 
     # Calculate budget categories breakdown for the month and store into separate variables - round to 2 dec places
-    needs = round(month_income * 0.5, 2)
-    wants = round(month_income * 0.3, 2)
-    savings = round(month_income * 0.2, 2)
+    needs = round(month_income * 0.50)
+    wants = round(month_income * 0.30)
+    savings = round(month_income * 0.20)
 
     # Log to budget csv file under that month
     populate_month_budget_csv(month_choice, month_income, needs, wants, savings)
