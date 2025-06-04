@@ -27,7 +27,7 @@ user_menu_choice = get_menu_choice()
 # Create a switch/match statement that acts as the menu for the program
 match user_menu_choice:
     case 1:
-        print("TBC")
+        menu_option_1()
     case 2:
         print("TBC")
     case 3:

@@ -1,6 +1,12 @@
 # Import datetime module
 import datetime
 
+# Import regular expression module for decimal handling
+import re
+
+# Import csv to use csv file logic
+import csv
+
 # Credit to patorjk.com for an ASCII title art text generator
 # Prints out the welcome message title art for the budget tracker
 def print_welcome_message():
@@ -60,12 +66,12 @@ def get_menu_choice():
 def get_month_choice():
     valid_month = False
     # list of months to easily check input
-    month_list = ["january", "february", "march", "april", "may", "june", "july", "august", "september", "october", "november", "december"]
+    month_list = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"]
 
+    print()
     while valid_month != True:
         try:
-            user_month_choice = input("Please enter the name of the month for which you would like to log an entry: ").lower() # .lower to allow mis-capitalization
-
+            user_month_choice = input("Please enter the name of the month for which you would like to log an entry: ").capitalize() # .capitalize to set first letter to upper, rest lower
             # check if what user entered is in the month_list - if it is then we break out of loop
             if user_month_choice in month_list:
                 valid_month = True
@@ -76,10 +82,68 @@ def get_month_choice():
             print("Invalid input: Value must be a string.\n")
 
     return user_month_choice
-            
 
-        
+# Gets user's income for a month
+def get_month_income(month):
+    valid_income = False
+
+    while valid_income == False:
+        try:
+
+            user_month_income = input("Please enter your income for " + month + ": ")
+
+            # check if the amount entered is a positive number and entered with 2 digits after the decimal (Credit to copilot for using regular expression to read string info)
+            if float(user_month_income) > 0 and re.match(r"^\d+\.\d{2}$", user_month_income):
+                valid_income = True
+            else:
+                print("Please enter a positive income amount as a float with exactly two decimal places.\n")
+
+        except ValueError:
+            print("Please enter a float value down to 2 places after the decimal.\n")
     
+    return float(user_month_income)
 
+# Populates the contents of a month row in the budget csv file
+def populate_month_budget_csv(month, income, needs, wants, savings):
+    # File name for the csv
+    budget_csv_filename = "budget_2025.csv"
 
+    # To find the correct area to populate, we open in read mode and populate a list first
+    with open(budget_csv_filename, 'r') as infile:
+        reader = csv.reader(infile)
+        data = list(reader)
+
+    # Loop through each row in the list
+    for row in data:
+        # Look at each column 0, and if we find matching month name, populate that rows columns appropriately and break out
+        if row[0] == month:
+            row[1] = income
+            row[2] = needs
+            row[3] = wants
+            row[4] = savings
+            break
+
+    # Since we want to populate, we open in write mode and write in data list to update
+    with open(budget_csv_filename, 'w') as outfile:
+        writer = csv.writer(outfile)
+        writer.writerows(data)
+    
+    # Let the user know the csv was successfully updated with the values
+    print("Your income and budget category breakdown was updated in " + budget_csv_filename + "\n")
+
+# Driver function for menu option #1
+def menu_option_1():
+    # Get user to choose month they'd like to log income for
+    month_choice = get_month_choice()
+
+    # Get user to enter their income for the month they chose
+    month_income = get_month_income(month_choice)
+
+    # Calculate budget categories breakdown for the month and store into separate variables - round to 2 dec places
+    needs = round(month_income * 0.5, 2)
+    wants = round(month_income * 0.3, 2)
+    savings = round(month_income * 0.2, 2)
+
+    # Log to budget csv file under that month
+    populate_month_budget_csv(month_choice, month_income, needs, wants, savings)
 
