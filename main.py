@@ -24,7 +24,7 @@ print_menu_instructions()
 print_menu_options()
 
 user_menu_choice = get_menu_choice()
-# Create a switch statement that acts as the menu for the program
+# Create a switch/match statement that acts as the menu for the program
 match user_menu_choice:
     case 1:
         print("TBC")
