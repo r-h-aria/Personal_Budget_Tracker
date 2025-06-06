@@ -7,6 +7,9 @@ import re
 # Import csv to use csv file logic
 import csv
 
+# Import prettytable to print out nice tables in the terminal
+from prettytable import PrettyTable
+
 # Credit to patorjk.com for an ASCII title art text generator
 # Prints out the welcome message title art for the budget tracker
 def print_welcome_message():
@@ -123,7 +126,7 @@ def populate_month_budget_csv(month, income, needs, wants, savings):
             break
 
     # Since we want to populate, we open in write mode and write in data list to update
-    with open(budget_csv_filename, 'w') as outfile:
+    with open(budget_csv_filename, 'w', newline="") as outfile:
         writer = csv.writer(outfile)
         writer.writerows(data)
     
@@ -145,4 +148,54 @@ def menu_option_1():
 
     # Log to budget csv file under that month
     populate_month_budget_csv(month_choice, month_income, needs, wants, savings)
+
+    # Ask to return to menu or quit
+    menu_or_quit()
+
+# Type menu to go back to the menu, or quit to quit the program
+def menu_or_quit():
+    is_menu = False
+
+    while is_menu != True:
+        try:
+            user_choice = input("Please type 'menu' if you would like to go back to the menu, or 'quit' if you would like to quit the program: ")
+
+            # If they enter menu, we can just break out of the loop and the while loop in main takes care of it
+            # Otherwise, it quits the program
+            if user_choice == "menu":
+                is_menu = True
+            elif user_choice == "quit":
+                exit()
+            else:
+                print("Please enter either 'menu' or 'quit'\n")
+
+        except ValueError:
+            print("Please enter a string value containing either 'menu' or 'quit'\n")
+
+# Generate and print table of budget breakdown
+def print_budget_csv():
+
+    # Header names for the table
+    table = PrettyTable(["Month", "Income", "Needs", "Wants", "Savings"])
+
+    # File name for the csv
+    budget_csv_filename = "budget_2025.csv"
+
+    # Read data into a list so we can use it
+    with open(budget_csv_filename, 'r') as infile:
+        reader = csv.reader(infile)
+        data = list(reader)
+
+    # For each row in the list starting from row 1, we write it to the table
+    for row in data[1:]:
+        table.add_row(row)
+    
+    print(table)
+
+# Driver function for menu option #2
+def menu_option_2():
+    # Print the budget csv as a table in the terminal
+    print_budget_csv()
+    print()
+    menu_or_quit()
 

@@ -21,29 +21,35 @@ print_welcome_message()
 
 print_menu_instructions()
 
-print_menu_options()
+is_exit = False
 
-user_menu_choice = get_menu_choice()
-# Create a switch/match statement that acts as the menu for the program
-match user_menu_choice:
-    case 1:
-        menu_option_1()
-    case 2:
-        print("TBC")
-    case 3:
-        print("TBC")
-    case 4:
-        print("TBC")
-    case 5:
-        print("TBC")
-    case 6:
-        print("TBC")
-    case 7:
-        print("TBC")
-    case 8:
-        print("TBC")
-    case _:
-        print("N/A")
+while is_exit != True:
+
+    print_menu_options()
+
+    user_menu_choice = get_menu_choice()
+    # Create a switch/match statement that acts as the menu for the program
+    match user_menu_choice:
+        case 1:
+            menu_option_1()
+        case 2:
+            menu_option_2()
+        case 3:
+            print("TBC")
+        case 4:
+            print("TBC")
+        case 5:
+            print("TBC")
+        case 6:
+            print("TBC")
+        case 7:
+            print("TBC")
+        case 8:
+            is_exit = True
+        case _:
+            print("N/A")
+    
+    
 
 # Step 3: Begin implementation of each menu item
 
