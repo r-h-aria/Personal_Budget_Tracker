@@ -35,7 +35,7 @@ while is_exit != True:
         case 2:
             menu_option_2()
         case 3:
-            print("TBC")
+            menu_option_3()
         case 4:
             print("TBC")
         case 5:
