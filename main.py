@@ -39,7 +39,7 @@ while is_exit != True:
         case 4:
             print("TBC")
         case 5:
-            print("TBC")
+            menu_option_5()
         case 6:
             print("TBC")
         case 7:

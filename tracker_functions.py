@@ -54,6 +54,7 @@ def print_menu_options():
     
 # Obtains user's input for choice of menu option. Performs basic input validation and loops till user enters valid option
 def get_menu_choice():
+
     # initial variable to act as loop termination
     valid_choice = False
 
@@ -73,15 +74,17 @@ def get_menu_choice():
     return user_menu_choice
 
 # Re-usable function that asks the user to enter in a month
-def get_month_choice():
+# Takes in string to append to the prompt to the user
+def get_month_choice(append_prompt):
     valid_month = False
+
     # list of months to easily check input
     month_list = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"]
 
     print()
     while valid_month != True:
         try:
-            user_month_choice = input("Please enter the name of the month for which you would like to log an entry: ").capitalize() # .capitalize to set first letter to upper, rest lower
+            user_month_choice = input(f"Please enter the name of the month {append_prompt}: ").capitalize() # .capitalize to set first letter to upper, rest lower
             # check if what user entered is in the month_list - if it is then we break out of loop
             if user_month_choice in month_list:
                 valid_month = True
@@ -99,7 +102,7 @@ def get_month_income(month):
 
     while valid_income == False:
         try:
-            user_month_income = int(input("Please enter your income for " + month + ": "))
+            user_month_income = int(input(f"Please enter your income for {month}: "))
 
             # check if the amount entered is a positive number and entered with 2 digits after the decimal (Credit to copilot for using regular expression to read string info)
             if user_month_income > 0:
@@ -113,6 +116,7 @@ def get_month_income(month):
     
 # Populates the contents of a month row in the budget csv file
 def populate_month_budget_csv(month, income, needs, wants, savings):
+
     # File name for the csv
     budget_csv_filename = "budget_2025.csv"
 
@@ -141,8 +145,9 @@ def populate_month_budget_csv(month, income, needs, wants, savings):
 
 # Driver function for menu option #1
 def menu_option_1():
+
     # Get user to choose month they'd like to log income for
-    month_choice = get_month_choice()
+    month_choice = get_month_choice("you'd like to log income for")
 
     # Get user to enter their income for the month they chose
     month_income = get_month_income(month_choice)
@@ -187,10 +192,14 @@ def print_budget_csv():
     # File name for the csv
     budget_csv_filename = "budget_2025.csv"
 
-    # Read data into a list so we can use it
-    with open(budget_csv_filename, 'r') as infile:
-        reader = csv.reader(infile)
-        data = list(reader)
+    try:
+        # Read data into a list so we can use it
+        with open(budget_csv_filename, 'r') as infile:
+            reader = csv.reader(infile)
+            data = list(reader)
+    except FileNotFoundError:
+        print("Budget File doesn't seem to exist! Exiting...")
+        exit()
 
     # For each row in the list starting from row 1, we write it to the table
     for row in data[1:]:
@@ -200,13 +209,16 @@ def print_budget_csv():
 
 # Driver function for menu option #2
 def menu_option_2():
+
     # Print the budget csv as a table in the terminal
     print_budget_csv()
     print()
     menu_or_quit()
 
 # Creates and initializes expense csv for correct month with headers (if it doesnt exist already)
-def autocreate_expense_csv(month):    # Use the proper month expense file name
+def autocreate_expense_csv(month):    
+
+    # Use the proper month expense file name
     filename = f"expenses_{month}_2025.csv"
 
     # Headers for the file
@@ -226,7 +238,9 @@ def autocreate_expense_csv(month):    # Use the proper month expense file name
 # Finds and Populates expense file with expense in proper csv file
 def populate_expense_csv(month, day, category, description, amount):
 
+    # Create expense file if not created already, otherwise do nothing
     expense_filename = autocreate_expense_csv(month)
+
     # Slice string to format the date nicely
     format_date = f"{month[:3]}-{day}"
 
@@ -235,6 +249,9 @@ def populate_expense_csv(month, day, category, description, amount):
     with open(expense_filename, 'a', newline="") as outfile:
         writer = csv.writer(outfile)
         writer.writerow([format_date, category, description, amount])
+    
+    # Sort the expense file by date
+    sort_expense_csv(expense_filename)
     
     print(f"Your expense breakdown was updated for the month of {month} in {expense_filename}.\n")
 
@@ -302,11 +319,32 @@ def get_expense_amount():
 
     return float(Decimal(expense_amount))
 
+# Read the contents of the expense file, extract it to a list and sort it, then write it back
+def sort_expense_csv(filename):
+
+    # Open in read mode, and extract headers first, then send data to list
+    with open(filename, "r", newline="") as infile:
+        reader = csv.reader(infile)
+        headers = next(reader)
+        data = list(reader)
+    
+    # Sort the data by extracting only the day value and using built in sort function
+    # Since it is a list of a list, we need to specify the criteria for sorting,
+    # so we make a key with a temp function that only looks at the date, and then the day part and 
+    # sort based on that
+    data.sort(key=lambda row: int(row[0].split("-")[1]))
+
+    # Write sorted list back to the csv after we write header first
+    with open(filename, "w", newline="") as outfile:
+        writer = csv.writer(outfile)
+        writer.writerow(headers)
+        writer.writerows(data)
+
 # Driver function for menu option #3
 def menu_option_3():
 
     # Begin by getting the month for which the user would like to log an expense
-    user_month_choice = get_month_choice()
+    user_month_choice = get_month_choice("you'd like to log an expense for")
 
     # Get the day of the expense
     user_day_choice = get_day_choice(user_month_choice)
@@ -322,3 +360,45 @@ def menu_option_3():
 
     # Populate the csv file with the expense
     populate_expense_csv(user_month_choice, user_day_choice, user_category_choice, expense_description, expense_amount)
+
+    # Ask to return to menu or quit the program
+    menu_or_quit()
+
+# Generate and print table of expenses for specific month
+def print_expense_csv():
+
+    # Get the month that the user would like to view their expenses for
+    user_month_choice = get_month_choice("you'd like to view your expenses for")
+
+    # File name for the csv
+    expense_csv_filename = f"expenses_{user_month_choice}_2025.csv"
+
+    # Checking if file exists
+    try:
+        # Read data to list
+        with open(expense_csv_filename, "r", newline="") as infile:
+            reader = csv.reader(infile)
+            data = list(reader)
+
+    except FileNotFoundError:
+        print(f"No expense file found for {user_month_choice}. Make sure to log some expenses first.\n")
+        return
+    
+    # Generate header names for the table
+    table = PrettyTable(["Date", "Category" , "Description" , "Amount"])
+
+    # Each row starting from row 1, write to the table
+    for row in data[1:]:
+        table.add_row(row)
+    
+    # Print the table
+    print(table)
+
+# Driver function for menu option #5
+def menu_option_5():
+
+    # Print expense csv as table in terminal
+    print_expense_csv()
+    print()
+    menu_or_quit()
+
