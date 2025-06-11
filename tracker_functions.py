@@ -365,13 +365,10 @@ def menu_option_3():
     menu_or_quit()
 
 # Generate and print table of expenses for specific month
-def print_expense_csv():
-
-    # Get the month that the user would like to view their expenses for
-    user_month_choice = get_month_choice("you'd like to view your expenses for")
+def print_expense_csv(month):
 
     # File name for the csv
-    expense_csv_filename = f"expenses_{user_month_choice}_2025.csv"
+    expense_csv_filename = f"expenses_{month}_2025.csv"
 
     # Checking if file exists
     try:
@@ -381,11 +378,11 @@ def print_expense_csv():
             data = list(reader)
 
     except FileNotFoundError:
-        print(f"No expense file found for {user_month_choice}. Make sure to log some expenses first.\n")
-        return
+        print(f"No expense file found for {month}. Make sure to log some expenses first.\n")
+        return False
     
     # Generate header names for the table
-    table = PrettyTable(["Date", "Category" , "Description" , "Amount"])
+    table = PrettyTable(["Date", "Category", "Description", "Amount"])
 
     # Each row starting from row 1, write to the table
     for row in data[1:]:
@@ -397,8 +394,80 @@ def print_expense_csv():
 # Driver function for menu option #5
 def menu_option_5():
 
+    # Get the month that the user would like to view their expenses for
+    user_month_choice = get_month_choice("you'd like to view your expenses for")
+
     # Print expense csv as table in terminal
-    print_expense_csv()
+    print_expense_csv(user_month_choice)
     print()
     menu_or_quit()
 
+# Finds and prints all expenses of a month and day value, giving each associated ID #, and write those into its own list
+def find_expenses_by_date(month, day):
+    
+    filename = f"expenses_{month}_2025.csv"
+
+    # Check whether csv file exists for given month, and read into list
+    try:
+        with open(filename, "r", newline="") as infile:
+            reader = csv.reader(infile)
+            next(reader)
+            data = list(reader)
+    
+    except FileNotFoundError:
+        print(f"No expense file found for {month}. Make sure to log some expenses first.\n")
+    
+    # Create an empty list holding the expense rows that match the date entered
+    expenses_matching_date =[]
+
+    # For each date column value that matches the day, store it in the list
+    for row in data:
+        if row[0].split("-")[1] == day:
+            expenses_matching_date.append(row)
+    
+    # At this point, if the list is empty then the date entered has no matching values so we return the empty list
+    if not expenses_matching_date:
+        print(f"No expenses were found for {month} {day}.\n")
+        return expenses_matching_date
+    
+    table = PrettyTable(["ID", "Date", "Category", "Description", "Amount"])
+
+    # iterator that will count up filling the ID values of the table
+    id_iterator = 1
+
+    # Fill the pretty table with values
+    for row in expenses_matching_date:
+        table.add_row([id_iterator, row[0], row[1], row[2], row[3]])
+        id_iterator += 1
+
+    print(table)
+
+    return expenses_matching_date
+        
+# Driver function for menu option #4
+def menu_option_4():
+
+    # Get the month of the expense they'd like to remove
+    user_month_choice = get_month_choice("of the expense you'd like to remove")
+
+    print()
+    # Print out the expenses for that month and if false, return to main menu
+    if print_expense_csv(user_month_choice) == False:
+        print("Returning to main menu...\n")
+        return
+    
+    print()
+    # Ask them for the day of the expense
+    user_day_choice = get_day_choice(user_month_choice)
+
+    # Print out the rows of expenses with that date, preceeded with a number 1, 2, 3, etc
+    expenses_matching_date = find_expenses_by_date(user_month_choice, user_day_choice)
+    # Ask the user to enter the number tied to the expense
+
+    # Delete that row from the stored expenses
+
+    # Re-write updated list of expenses to csv file
+
+    # Prompt user that the expense has been removed
+
+    # Menu or quit
