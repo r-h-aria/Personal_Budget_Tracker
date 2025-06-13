@@ -141,7 +141,7 @@ def populate_month_budget_csv(month, income, needs, wants, savings):
         writer.writerows(data)
     
     # Let the user know the csv was successfully updated with the values
-    print("Your income and budget category breakdown was updated in " + budget_csv_filename + "\n")
+    print(f"Your income and budget category breakdown was updated in {budget_csv_filename}.\n")
 
 # Driver function for menu option #1
 def menu_option_1():
@@ -443,7 +443,57 @@ def find_expenses_by_date(month, day):
     print(table)
 
     return expenses_matching_date
+
+# Calls find_expenses_by_date and also gets the ID of the expense user wants to remove, and removes it from the csv
+def remove_expense(month, day):
+    
+    # Call function to find and print the list of expenses matching user's demand
+    expenses_matching_date = find_expenses_by_date(month, day)
+    
+    # Early return if list is empty
+    if not expenses_matching_date:
+        return
+
+    valid_choice = False
+    while valid_choice != True:
+        try:
+            print()
+            id_choice = int(input("Please enter the ID associated with the expense you'd like to remove: "))
+
+            # Check that the choice is between 1 and the length of the list
+            if id_choice >= 1 and id_choice <= len(expenses_matching_date):
+                valid_choice = True
+            else:
+                print(f"Please enter a number between 1 and {len(expenses_matching_date)}\n")
         
+        except ValueError:
+            print("Please enter a valid integer.\n")
+
+    # Store the row of the expense which is to be removed
+    expense_to_be_removed = expenses_matching_date[id_choice - 1]
+
+    filename = f"expenses_{month}_2025.csv"
+
+    # Open the csv file, and read it into a list
+    with open(filename, "r", newline="") as infile:
+        reader = csv.reader(infile)
+        headers = next(reader)
+        data = list(reader)
+    
+    updated_expenses = []
+    # Linear search (yeah, I know ugh) the list for the expense row and remove it and write into a new list
+    for row in data:
+        if row != expense_to_be_removed:
+            updated_expenses.append(row)
+    
+    # Write the updated_expenses back to the csv
+    with open(filename, "w", newline="") as outfile:
+        writer = csv.writer(outfile)
+        writer.writerow(headers)
+        writer.writerows(updated_expenses)
+    
+    print(f"Expense removed. Your expenses for {month} were updated in {filename}")
+
 # Driver function for menu option #4
 def menu_option_4():
 
@@ -460,14 +510,10 @@ def menu_option_4():
     # Ask them for the day of the expense
     user_day_choice = get_day_choice(user_month_choice)
 
-    # Print out the rows of expenses with that date, preceeded with a number 1, 2, 3, etc
-    expenses_matching_date = find_expenses_by_date(user_month_choice, user_day_choice)
-    # Ask the user to enter the number tied to the expense
+    # Gets the list of expenses user wants to remove, and the user chooses one to remove
+    # repopulate csv with list without the expense
+    remove_expense(user_month_choice, user_day_choice)
 
-    # Delete that row from the stored expenses
-
-    # Re-write updated list of expenses to csv file
-
-    # Prompt user that the expense has been removed
-
+    print()
     # Menu or quit
+    menu_or_quit()
