@@ -201,11 +201,14 @@ def print_budget_csv():
         print("Budget File doesn't seem to exist! Exiting...")
         exit()
 
+    print()
     # For each row in the list starting from row 1, we write it to the table
     for row in data[1:]:
         table.add_row(row)
     
+    print("Generating budget breakdown...\n")
     print(table)
+    print()
 
 # Driver function for menu option #2
 def menu_option_2():
@@ -516,4 +519,118 @@ def menu_option_4():
 
     print()
     # Menu or quit
+    menu_or_quit()
+
+# Generate and print table of expenses for specific month
+def print_budget_remaining_csv():
+
+    # File name for the csv
+    filename = f"budget_remaining_2025.csv"
+
+    # Checking if file exists
+    try:
+        # Read data to list
+        with open(filename, "r", newline="") as infile:
+            reader = csv.reader(infile)
+            data = list(reader)
+
+    except FileNotFoundError:
+        print(f"No expense file found. Exiting as error...\n")
+        exit()
+    
+    # Generate header names for the table
+    table = PrettyTable(["Month", "Needs", "Wants", "Savings"])
+
+    # Each row starting from row 1, write to the table
+    for row in data[1:]:
+        table.add_row(row)
+    
+    print()
+    print("Generating remaining budget for each month...\n")
+    # Print the table
+    print(table)
+    print()
+
+# Driver function for menu option #6
+def menu_option_6():
+
+    budget_filename = "budget_2025.csv"
+
+    # Make a dictionary that has the month as the key, and the value as a nested dictionary containing the categories as its key, and amount of each category as the value
+    budget_dictionary = {}
+    with open(budget_filename, "r", newline="") as infile:
+        reader = csv.reader(infile)
+        next(reader)
+
+        for row in reader:
+            # Map appropriate column values from the budget csv for easier use
+            month = row[0]
+            needs = row[2]
+            wants = row[3]
+            savings = row[4]
+
+            # Make nested dictionary for the value pair of the outer dictionary
+            budget_dictionary[month] = {
+                "Needs": float(needs),
+                "Wants": float(wants),
+                "Savings": float(savings)
+            }
+    
+    # Make a dictionary for expenses with same format as budget's dictionary
+    expenses_dictionary = {}
+    for month in budget_dictionary:
+        expenses_dictionary[month] = {
+            "Needs": 0.00,
+            "Wants": 0.00,
+            "Savings": 0.00
+        }
+
+    # list of months for expense file name checking
+    month_list = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"]
+
+    # Open each expense file if it exists one at a time
+    for month in month_list:
+        expense_filename = f"expenses_{month}_2025.csv"
+
+        try:
+            with open(expense_filename, "r", newline="") as infile:
+                reader = csv.reader(infile)
+                next(reader)
+
+                for row in reader:
+                    # Take in the value of the category column and the amount column
+                    category = row[1]
+                    expense_amount = float(row[3])
+
+                    # Add amount to correct key value pair in nested dict
+                    expenses_dictionary[month][category] += expense_amount
+        
+        except FileNotFoundError:
+            pass
+    
+    # Finally, a dictionary for the remaining budget values with same format as the other dictionaries
+    budget_remaining_dictionary = {}
+    for month in budget_dictionary:
+        # Nest another dictionary as category and amount key value pair
+        budget_remaining_dictionary[month] = {}
+
+        # Go through each of the 3 categories of budget/spending for that month and get remaining budget
+        for category in budget_dictionary[month]:
+            budget_remaining_dictionary[month][category] = budget_dictionary[month][category] - expenses_dictionary[month][category]
+
+    budget_remaining_filename = "budget_remaining_2025.csv"
+
+    # Write the remaining budget to csv
+    with open(budget_remaining_filename, "w", newline="") as outfile:
+        writer = csv.writer(outfile)
+        writer.writerow(["Month", "Needs", "Wants", "Savings"])
+
+        for month in budget_remaining_dictionary:
+            category = budget_remaining_dictionary[month]
+            writer.writerow([month.strip(), f"{category['Needs']:.2f}", f"{category['Wants']:.2f}", f"{category['Savings']:.2f}"])
+    
+    # Print out the csv file
+    print_budget_remaining_csv()
+
+    # menu or quit
     menu_or_quit()
