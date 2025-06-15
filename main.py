@@ -31,8 +31,6 @@ while is_exit != True:
         case 6:
             menu_option_6()
         case 7:
-            print("TBC")
-        case 8:
             is_exit = True
         case _:
             print("N/A")

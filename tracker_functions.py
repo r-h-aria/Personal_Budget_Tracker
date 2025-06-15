@@ -47,8 +47,7 @@ def print_menu_options():
 *        4) Remove an expense             *
 *        5) View expense history          *
 *        6) Check remaining budget        *
-*        7) Generate spending report      *
-*        8) Exit                          *
+*        7) Exit                          *
 *******************************************
                                            """)
     
